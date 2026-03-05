@@ -2,7 +2,7 @@
 
 [English](./README.md) / 中文
 
-deb包到玲珑包工具。
+deb、appimage、flatpak 转玲珑包工具。
 
 Pica，来自拉丁语的喜鹊，意思是加强精致的生态和适应性。
 
@@ -21,17 +21,23 @@ Pica，来自拉丁语的喜鹊，意思是加强精致的生态和适应性。
 2. 构建:
 
 ```bash
-
 make build
-
 ```
 
 3. 安装:
 
 ```bash
-
 sudo make install
+```
 
+## 用法
+
+```bash
+ll-pica deb init -w work
+ll-pica deb convert -w work
+ll-pica appimage convert -f demo.AppImage -i io.github.demo -v 1.0.0.0
+ll-pica flatpak convert org.kde.kate --build
+ll-pica completion bash > ll-pica
 ```
 
 ## 获取帮助

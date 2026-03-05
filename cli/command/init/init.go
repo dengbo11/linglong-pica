@@ -82,6 +82,9 @@ func runInit(options *initOptions) error {
 	}
 
 	if options.packageId != "" && options.packageName != "" && options.getType != "" {
+		if err := comm.ValidatePackageID(options.packageId); err != nil {
+			return err
+		}
 		packConf.File.Deb = []deb.Deb{
 			{
 				Type: options.getType,

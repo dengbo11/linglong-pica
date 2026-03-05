@@ -66,7 +66,7 @@ sudo apt install linglong-pica
 
 ### 参数介绍
 
-ll-pica是本工具的命令行工具，主要包含转换环境的初始化、转包等功能。
+ll-pica是本工具的命令行工具，提供deb、appimage、flatpak三类格式的转换能力。
 
 查看ll-pica帮助信息：
 
@@ -75,19 +75,23 @@ ll-pica是本工具的命令行工具，主要包含转换环境的初始化、�
 ll-pica帮助信息显示如下：
 
 ```bash
-Convert the deb to uab. For example:
+Convert packages to uab. For example:
 Simple:
-        ll-pica init -c package -w work-dir
-        ll-pica convert -c package.yaml -w work-dir
+        ll-pica deb init -c package -w work-dir
+        ll-pica deb convert -c package.yaml -w work-dir
+        ll-pica appimage convert -f xxx.appimage -i io.github.demo -v 1.0.0.0
+        ll-pica flatpak convert org.kde.kate --build
         ll-pica help
 
 Usage:
   ll-pica [command]
 
 Available Commands:
-  convert     Convert deb to uab
+  appimage    Convert appimage package to linglong package
+  completion  Generate shell completion scripts
+  deb         Convert deb package to linglong package
+  flatpak     Convert flatpak package to linglong package
   help        Help about any command
-  init        init config template
 
 Flags:
   -h, --help      help for ll-pica
@@ -97,16 +101,26 @@ Flags:
 Use "ll-pica [command] --help" for more information about a command.
 ```
 
-ll-pica包含init、convert 命令参数
+ll-pica包含如下子命令组：
 
-- init 初始化模板。
-- convert 转包操作。
+- deb：包含 init/convert/adep 子命令。
+- appimage：包含 convert 子命令。
+- flatpak：包含 convert 子命令。
+- completion：生成 bash/zsh/fish 补全脚本。
+
+补全脚本示例：
+
+```bash
+ll-pica completion bash > ll-pica
+ll-pica completion zsh > _ll-pica
+ll-pica completion fish > ll-pica.fish
+```
 
 ### 环境初始化
 
-通过使用ll-pica的init命令，对转换所需的环境初进行始化。
+通过使用ll-pica的deb init命令，对deb转换所需的环境进行初始化。
 
-通过 `ll-pica init --help`命令的查找帮助信息：
+通过 `ll-pica deb init --help`命令查看帮助信息：
 
 ll-pica init 帮助信息显示如下：
 
@@ -114,7 +128,7 @@ ll-pica init 帮助信息显示如下：
 init config template
 
 Usage:
-  ll-pica init [flags]
+  ll-pica deb init [flags]
 
 Flags:
   -a, --arch string      runtime arch

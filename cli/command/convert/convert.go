@@ -97,6 +97,9 @@ func runConvert(options *convertOptions) error {
 	}
 
 	if options.packageId != "" && options.packageName != "" {
+		if err := comm.ValidatePackageID(options.packageId); err != nil {
+			return err
+		}
 		packConfig.File.Deb = []deb.Deb{
 			{
 				Type: "repo",
@@ -112,12 +115,16 @@ func runConvert(options *convertOptions) error {
 	}
 
 	for idx := range packConfig.File.Deb {
+		if err := comm.ValidatePackageID(packConfig.File.Deb[idx].Id); err != nil {
+			return err
+		}
+		log.Logger.Infof("starting conversion for package %s", packConfig.File.Deb[idx].Id)
 		appPath := filepath.Join(comm.BuildPackPath(options.Workdir), packConfig.File.Deb[idx].Id)
 		linglongYamlPath := filepath.Join(appPath, comm.LinglongYaml)
 
 		// 如果已经存在 linglong.yaml 文件直接跳过。
 		if ret, err := fs.CheckFileExits(linglongYamlPath); ret && err == nil {
-			log.Logger.Infof("%s file already exists", linglongYamlPath)
+			log.Logger.Infof("%s: linglong.yaml already exists, skip generation", packConfig.File.Deb[idx].Id)
 			continue
 		}
 
@@ -189,9 +196,10 @@ func runConvert(options *convertOptions) error {
 				Build:   packConfig.File.Deb[idx].Build,
 			}
 
+			log.Logger.Infof("%s: generating linglong.yaml", packConfig.File.Deb[idx].Id)
 			// 生成 linglong.yaml 文件
 			if builder.CreateLinglongYaml(linglongYamlPath) {
-				log.Logger.Infof("generate %s success.", comm.LinglongYaml)
+				log.Logger.Infof("%s: generated linglong.yaml", packConfig.File.Deb[idx].Id)
 			} else {
 				log.Logger.Errorf("generate %s failed", comm.LinglongYaml)
 			}
@@ -199,8 +207,13 @@ func runConvert(options *convertOptions) error {
 			// 构建玲珑包
 			if options.buildFlag {
 				buildLinglongPath := filepath.Dir(linglongYamlPath)
+				log.Logger.Infof("%s: building package", packConfig.File.Deb[idx].Id)
 				builder.LinglongBuild(buildLinglongPath, "ll-builder build")
+				log.Logger.Infof("%s: exporting package (%s)", packConfig.File.Deb[idx].Id, options.exportFile)
 				builder.LinglongExport(buildLinglongPath, options.exportFile)
+				log.Logger.Infof("%s: export completed", packConfig.File.Deb[idx].Id)
+			} else {
+				log.Logger.Infof("%s: skip build/export (set --build to enable)", packConfig.File.Deb[idx].Id)
 			}
 		}
 	}
