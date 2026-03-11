@@ -39,6 +39,8 @@ ll-pica flatpak convert org.kde.kate --build
 ll-pica completion bash > ll-pica
 ```
 
+Deb conversion details, generated `package.yaml`, and the updated `linglong.yaml` layout are documented in [usage.md](/home/dengbo/WorkDir/project/linglong-pica/usage.md).
+
 ## Getting help
 
 Any usage issues can ask for help via

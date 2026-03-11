@@ -2,11 +2,9 @@ PBUILDER_PKG = pbuilder-satisfydepends-dummy
 PREFIX = usr
 BINARY_DIR = bin
 BINARY_NAME = ll-pica
-GO_PATH = /tmp/go
-GO_CACHE = /tmp/go-cache
+GOPATH ?= /tmp/go
+GOCACHE ?= /tmp/go-cache
 VERSION ?= $(shell dpkg-parsechangelog -S Version 2>/dev/null || sed -n '1s/.*(\\(.*\\)).*/\\1/p' debian/changelog 2>/dev/null || echo dev)
-GoPath := GOPATH=${GO_PATH}
-export GOCACHE=${GO_CACHE}
 export GO111MODULE=on
 
 GOTEST = go test -v
@@ -18,8 +16,8 @@ GOBUILDDEBUG = go build -mod vendor -ldflags '-X pkg.deepin.com/linglong/pica/cl
 all: build
 
 build:
-	install -d ${GO_PATH} ${GO_CACHE}
-	CGO_ENABLED=0 ${GoPath} ${GOBUILD} -o ${BINARY_DIR}/${BINARY_NAME} ./cmd/${BINARY_NAME}
+	install -d ${GOPATH} ${GOCACHE}
+	CGO_ENABLED=0 ${GOBUILD} -o ${BINARY_DIR}/${BINARY_NAME} ./cmd/${BINARY_NAME}
 
 completion: build
 	install -d ${BINARY_DIR}/completions
@@ -28,10 +26,10 @@ completion: build
 	${BINARY_DIR}/${BINARY_NAME} completion fish > ${BINARY_DIR}/completions/${BINARY_NAME}.fish
 
 debug:
-	${GoPath} ${GOBUILDDEBUG} -o ${BINARY_DIR}/${BINARY_NAME} ./cmd/${BINARY_NAME}
+	${GOBUILDDEBUG} -o ${BINARY_DIR}/${BINARY_NAME} ./cmd/${BINARY_NAME}
 
 test:
-	${GoPath} ${GOTEST} ./tools/...
+	${GOTEST} ./tools/...
 
 install:
 	install -Dm0755 ${BINARY_DIR}/${BINARY_NAME} ${DESTDIR}/${PREFIX}/${BINARY_DIR}/${BINARY_NAME}
@@ -46,8 +44,8 @@ install:
 	install -Dm0755 misc/libexec/linglong/builder/helper/install_dep ${DESTDIR}/${PREFIX}/libexec/linglong/builder/helper/install_dep
 clean:
 	rm -rf ${BINARY_DIR}
-	rm -rf ${GO_PATH}
-	rm -rf ${GO_CACHE}
+	rm -rf ${GOCACHE}
+	rm -rf ${GOPATH}
 
 .PHONY: ${BINARY_NAME}
 .PHONY: completion

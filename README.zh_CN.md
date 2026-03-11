@@ -40,6 +40,8 @@ ll-pica flatpak convert org.kde.kate --build
 ll-pica completion bash > ll-pica
 ```
 
+deb 转换的配置模板、`linglong.yaml` 新结构和依赖处理方式，见 [usage.md](/home/dengbo/WorkDir/project/linglong-pica/usage.md)。
+
 ## 获取帮助
 
 有任何使用方面的问题都可以通过以下途径获取帮助。
